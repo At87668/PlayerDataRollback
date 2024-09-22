@@ -11,7 +11,7 @@ The plugin will auto create a backup on server startup.
 
 Backup is save in plugins/PlayerDataBackup/Backups/yyyy-mm-dd
 
-Commands
+##### Commands
 - /playerdata backup - Backup all playerdata
 - /playerdata rollback {playername} {days} - Rollback playerdata n days ago
 - /playerdata rollbackall {days} - Rollback all playerdata n days ago
@@ -19,14 +19,19 @@ Commands
 - /playerdata removeall {days} - Remove all playerdata n days ago
 - /playerdata backup - Backup all playerdata
 
-Config.yml
-Code (Text):
+- ](https://github.com/At87668)
+
+##### Config.yml
+```yaml
 backup-auto-remove: 7 # Automatically deletes backups older than the specified number of days
 backup-interval: 86400 # Automatic backup interval in seconds
 world-name: world # The name of the world where playerdata is stored
 language: "en_US" # Language
-en_US.yml
-Code (Text):
+```
+
+
+##### en_US.yml
+```yaml
 messages:
   backup-completed: "Backup completed successfully."
   rollback-completed: "Rolled back data for player {player}."
@@ -36,8 +41,12 @@ messages:
   usage-error: "Usage: /playerdata <backup|rollback|rollbackall|removeall|reload>"
   no-backup-found: "No backup found from {days} days ago."
   no-playerdata: "Player data folder not found!"
-zh_CN.yml
-Code (Text):
+```
+
+
+##### zh_CN.yml
+
+```yaml
 messages:
   backup-completed: "备份成功完成。"
   rollback-completed: "已回滚玩家 {player} 的数据。"
@@ -47,6 +56,8 @@ messages:
   usage-error: "用法: /playerdata <backup|rollback|rollbackall|removeall|reload>"
   no-backup-found: "没有找到 {days} 天前的备份。"
   no-playerdata: "未找到玩家数据文件夹！"
+
+```
 
 ## Authors
 
