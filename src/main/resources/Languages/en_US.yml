@@ -1,0 +1,9 @@
+messages:
+  backup-completed: "Backup completed successfully."
+  rollback-completed: "Rolled back data for player {player}."
+  rollback-all-completed: "Rolled back data for all players to {days} days ago."
+  removeall-completed: "Removed backups older than {days} days."
+  reload-completed: "Plugin configuration reloaded."
+  usage-error: "Usage: /playerdata <backup|rollback|rollbackall|removeall|reload>"
+  no-backup-found: "No backup found from {days} days ago."
+  no-playerdata: "Player data folder not found!"

@@ -1,0 +1,9 @@
+messages:
+  backup-completed: "备份成功完成。"
+  rollback-completed: "已回滚玩家 {player} 的数据。"
+  rollback-all-completed: "已回滚所有玩家的数据到 {days} 天前。"
+  removeall-completed: "已删除超过 {days} 天的备份。"
+  reload-completed: "插件配置已重新加载。"
+  usage-error: "用法: /playerdata <backup|rollback|rollbackall|removeall|reload>"
+  no-backup-found: "没有找到 {days} 天前的备份。"
+  no-playerdata: "未找到玩家数据文件夹！"

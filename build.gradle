@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
+group 'link.star_dust'
+version '1.4-GA'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes(
+            'Main-Class': 'link.star_dust.PlayerDataBackup',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version
+        )
+    }
+	exclude 'META-INF/', 'LICENSE.txt', 'LICENSE', 'org/', 'com/', 'net/', 'mojang-translations/', 'javax/'
+
+    from {
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
