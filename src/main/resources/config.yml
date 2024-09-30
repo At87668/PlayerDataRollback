@@ -1,4 +1,4 @@
-backup-auto-remove: 7 # Automatically deletes backups older than the specified number of days
-backup-interval: 86400 # Automatic backup interval in seconds
+backup-auto-remove: 7 # Automatically deletes backups older than the specified number of days (Set -1 to disable)
+backup-interval: 1728000 # Automatic backup interval in ticks (about 20 ticks = 1 seconds)
 world-name: world # The name of the world where playerdata is stored
 language: "en_US" # Language

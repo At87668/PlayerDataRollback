@@ -1,10 +1,11 @@
 plugins {
     id 'java'
     id 'eclipse'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group 'link.star_dust'
-version '1.4-GA'
+version '2.0-GA'
 
 sourceCompatibility = 1.8
 
@@ -14,10 +15,15 @@ repositories {
         name = 'spigotmc-repo'
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
+    maven {
+        name = 'bStats'
+        url = 'https://repo.codemc.org/repository/maven-public/'
+    }
 }
 
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+    implementation 'org.bstats:bstats-bukkit:3.0.0'
 }
 
 tasks.withType(JavaCompile) {
@@ -28,14 +34,24 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes(
-            'Main-Class': 'link.star_dust.PlayerDataBackup',
+            'Main-Class': 'link.star_dust.PlayerDataRollback',
             'Implementation-Title': project.name,
             'Implementation-Version': project.version
         )
     }
-	exclude 'META-INF/', 'LICENSE.txt', 'LICENSE', 'org/', 'com/', 'net/', 'mojang-translations/', 'javax/'
+    exclude 'META-INF/', 'LICENSE.txt', 'LICENSE', 'org/apache/', 'org/spigotmc/', 'org/bukkit/', 'org/yaml/', 'com/', 'net/', 'mojang-translations/', 'javax/'
 
     from {
         configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+}
+
+shadowJar {
+    relocate 'org.bstats', 'link.star_dust.bstats'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveClassifier.set('')
+}
+
+build {
+    dependsOn shadowJar
 }

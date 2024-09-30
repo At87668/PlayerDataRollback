@@ -1,17 +1,15 @@
-name: PlayerDataBackup
-version: 1.4-GA
-main: link.star_dust.PlayerDataBackup.PlayerData
+name: PlayerDataRollback
+version: 2.0-GA
+main: link.star_dust.PlayerDataRollback.PlayerData
 api-version: 1.13
-description: Auto Backup PlayerData
+description: Allow you creata playerdata buckup and rollback playerdata
 commands:
   playerdata:
-    description: Manages the PlayerDataBackup plugin
+    description: Plugin's main command
+    aliases: [pld, pldr, playerdatarollback]
     usage: "/playerdata <command>"
     permission: playerdata.use
 permissions:
-  playerdata.use:
-    description: Allows the player to use the PlayerDataBackup plugin
-    default: op
   playerdata.reload:
     description: Allows the player to reload the plugin configuration
     default: op
@@ -29,4 +27,10 @@ permissions:
     default: op
   playerdata.backup:
     description: Allows the player to create backups
+    default: op
+  playerdata.help:
+    description: Allows the player to get the plugin's help
+    default: op
+  playerdata.list:
+    description: Allows the player to list all backups
     default: op
