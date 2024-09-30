@@ -18,14 +18,14 @@ Kicks all players when rolling back all data to avoid conflicts.
 ## Commands
 Backup Management
 /pld backup create <backup name> - Create a backup of all player data.
-/pld list (-t:<xd/xm/xy>) - List backups filtered by time (days/months/years ago).
+/pld list (:<xd/xm/xy>) - List backups filtered by time (days/months/years ago).
 /pld page <number> - Navigate through the list of backups (used after /pld list).
 Rollback
 /pld rollback <playername> <backup name> - Rollback a player's data to a specific backup.
-/pld rollbackall (-t:<xd/xm/xy>) - Rollback all player data from a specified time period or backup (this will kick all online players).
+/pld rollbackall (<xd/xm/xy>) - Rollback all player data from a specified time period or backup (this will kick all online players).
 ## Backup Removal
 /pld backup remove <backup name> - Delete a specific backup.
-/pld backup removeall (-t:<xd/xm/xy>) - Delete all backups from a specified time period (days/months/years ago).
+/pld backup removeall (<xd/xm/xy>) - Delete all backups from a specified time period (days/months/years ago).
 ## Multi-language Support
 The plugin supports multiple languages:
 
@@ -56,4 +56,4 @@ If you encounter any issues or have suggestions for new features, feel free to r
 
 
 ## bStats
-[https://bstats.org/plugin/bukkit/PlayerDataRollback/23504](https://bstats.org/signatures/bukkit/PlayerDataRollback.svg)
+![https://bstats.org/signatures/bukkit/PlayerDataRollback.svg](https://bstats.org/plugin/bukkit/PlayerDataRollback/23504)
