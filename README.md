@@ -54,3 +54,6 @@ List backups from the last 3 months: /pld list -t:3m
 ## Support
 If you encounter any issues or have suggestions for new features, feel free to reach out via SpigotMC or open a issue on plugin's github repository.
 
+
+## bStats
+[https://bstats.org/plugin/bukkit/PlayerDataRollback/23504](https://bstats.org/signatures/bukkit/PlayerDataRollback.svg)
