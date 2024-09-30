@@ -1,64 +1,56 @@
-# PlayerDataBackup
+# PlayerDataRollback​
 
-A Spigot plugin to auto backup playerdata
+## Overview
+Losing player data unexpectedly is incredibly frustrating, and finding a reliable solution can be difficult. That's why I created PlayerDataRollback—a plugin designed to automatically back up and restore player data, giving you peace of mind.
 
-I hate the sudden loss of player data, it's really troublesome.
-But again I can't find a good playerdata backup plugin, so I wrote this and hope to help more people.
+The plugin automatically creates a backup every time the server starts. You can also manually back up, restore, and manage backups with simple commands.
 
-You can get the plugin on https://www.spigotmc.org/resources/playerdatabackup.119720/
+Backups are saved in plugins/PlayerDataRollback/Backups
 
-The plugin will auto create a backup on server startup.
+## Features
+Automatically backs up player data on server startup.
+Manually create, rollback, and remove player data backups.
+Filter backups by specific time periods such as days, months, or years.
+Restore individual player data or all players at once.
+Supports multi-language (English, Chinese Simplified, Chinese Traditional, and German).
+Paginated display of backup lists.
+Kicks all players when rolling back all data to avoid conflicts.
+## Commands
+Backup Management
+/pld backup create <backup name> - Create a backup of all player data.
+/pld list (-t:<xd/xm/xy>) - List backups filtered by time (days/months/years ago).
+/pld page <number> - Navigate through the list of backups (used after /pld list).
+Rollback
+/pld rollback <playername> <backup name> - Rollback a player's data to a specific backup.
+/pld rollbackall (-t:<xd/xm/xy>) - Rollback all player data from a specified time period or backup (this will kick all online players).
+## Backup Removal
+/pld backup remove <backup name> - Delete a specific backup.
+/pld backup removeall (-t:<xd/xm/xy>) - Delete all backups from a specified time period (days/months/years ago).
+## Multi-language Support
+The plugin supports multiple languages:
 
-Backup is save in plugins/PlayerDataBackup/Backups/yyyy-mm-dd
+English (en_US)
+Chinese (Simplified) (zh_CN)
+Chinese (Traditional) (zh_TW)
+German (de_DE)
+Translations are applied automatically based on the server's locale.
 
-##### Commands
-- /playerdata backup - Backup all playerdata
-- /playerdata rollback {playername} {days} - Rollback playerdata n days ago
-- /playerdata rollbackall {days} - Rollback all playerdata n days ago
-- /playerdata remove {days} - Remove playerdata n days ago
-- /playerdata removeall {days} - Remove all playerdata n days ago
-- /playerdata backup - Backup all playerdata
+## Installation
+Download the latest version of PlayerDataRollback from SpigotMC.
+Place the .jar file into the plugins folder.
+Restart the server to generate the configuration and necessary files.
+Backups will be automatically created on each server startup, or use the commands for manual control.
+Permissions
+playerdata.use - Grants access to all plugin commands.
+playerdata.admin - Grants admin access to delete or rollback backups.
+Configuration
+You can configure the plugin in the config.yml file, located in plugins/PlayerDataRollback. It allows you to change the world name, backup location, and language settings.
 
-- ](https://github.com/At87668)
+## Example Usage
+Create a backup: /pld backup create myBackup
+Rollback a player's data: /pld rollback Steve myBackup
+Rollback all player data from 7 days ago: /pld rollbackall -t:7d
+List backups from the last 3 months: /pld list -t:3m
+## Support
+If you encounter any issues or have suggestions for new features, feel free to reach out via SpigotMC or open a issue on plugin's github repository.
 
-##### Config.yml
-```yaml
-backup-auto-remove: 7 # Automatically deletes backups older than the specified number of days
-backup-interval: 86400 # Automatic backup interval in seconds
-world-name: world # The name of the world where playerdata is stored
-language: "en_US" # Language
-```
-
-
-##### en_US.yml
-```yaml
-messages:
-  backup-completed: "Backup completed successfully."
-  rollback-completed: "Rolled back data for player {player}."
-  rollback-all-completed: "Rolled back data for all players to {days} days ago."
-  removeall-completed: "Removed backups older than {days} days."
-  reload-completed: "Plugin configuration reloaded."
-  usage-error: "Usage: /playerdata <backup|rollback|rollbackall|removeall|reload>"
-  no-backup-found: "No backup found from {days} days ago."
-  no-playerdata: "Player data folder not found!"
-```
-
-
-##### zh_CN.yml
-
-```yaml
-messages:
-  backup-completed: "备份成功完成。"
-  rollback-completed: "已回滚玩家 {player} 的数据。"
-  rollback-all-completed: "已回滚所有玩家的数据到 {days} 天前。"
-  removeall-completed: "已删除超过 {days} 天的备份。"
-  reload-completed: "插件配置已重新加载。"
-  usage-error: "用法: /playerdata <backup|rollback|rollbackall|removeall|reload>"
-  no-backup-found: "没有找到 {days} 天前的备份。"
-  no-playerdata: "未找到玩家数据文件夹！"
-
-```
-
-## Authors
-
-- [Author87668](https://github.com/At87668)
