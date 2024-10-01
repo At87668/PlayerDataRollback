@@ -67,4 +67,4 @@ If you encounter any issues or have suggestions for new features, feel free to r
 
 
 ## bStats
-![https://bstats.org/signatures/bukkit/PlayerDataRollback.svg](https://bstats.org/plugin/bukkit/PlayerDataRollback/23504)
+[![bStats](https://bstats.org/signatures/bukkit/PlayerDataRollback.svg)](https://bstats.org/plugin/bukkit/PlayerDataRollback/23504)
