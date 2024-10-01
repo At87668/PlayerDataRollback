@@ -1,5 +1,5 @@
 name: PlayerDataRollback
-version: 2.0-GA
+version: 2.0.1-GA
 main: link.star_dust.PlayerDataRollback.PlayerData
 api-version: 1.13
 description: Allow you creata playerdata buckup and rollback playerdata
@@ -19,14 +19,17 @@ permissions:
   playerdata.rollbackall:
     description: Allows the player to rollback all backups
     default: op
-  playerdata.remove:
-    description: Allows the player to remove backups
+  playerdata.backup.remove:
+    description: Allows the player to remove backups, required playerdata.backup permission
     default: op
-  playerdata.removeall:
-    description: Allows the player to remove all backups
+  playerdata.backup.removeall:
+    description: Allows the player to remove all backups, required playerdata.backup permission
+    default: op
+  playerdata.backup.create:
+    description: Allows the player to create backups, required playerdata.backup permission
     default: op
   playerdata.backup:
-    description: Allows the player to create backups
+    description: Basic backup command permission
     default: op
   playerdata.help:
     description: Allows the player to get the plugin's help

@@ -54,7 +54,7 @@ public class PlayerData extends JavaPlugin {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(applyColorCodes("&aPlayerData&bRollback &2v2.0-GA\n&eby &6Author87668\n\n&ahttps://www.spigotmc.org/resources/119720/"));
+            sender.sendMessage(applyColorCodes("&aPlayerData&bRollback &2v2.0.1-GA\n&eby &6Author87668\n\n&ahttps://www.spigotmc.org/resources/119720/"));
             return true;
         }
 
@@ -70,13 +70,13 @@ public class PlayerData extends JavaPlugin {
             case "backup":
                 if (sender.hasPermission("playerdata.backup")) {
                 	if (args.length >= 2) {
-                        if ("create".equalsIgnoreCase(args[1])) {
+                        if ("create".equalsIgnoreCase(args[1]) && sender.hasPermission("playerdata.backup.create")) {
                             backupPlayerData(args.length == 3 ? args[2] : null);
                             sender.sendMessage(applyColorCodes(getMessage("backup-completed")));
-                        } else if ("remove".equalsIgnoreCase(args[1]) && args.length == 3) {
+                        } else if ("remove".equalsIgnoreCase(args[1]) && args.length == 3 && sender.hasPermission("playerdata.backup.remove")) {
                             removeBackup(args[2]);
                             sender.sendMessage(applyColorCodes(getMessage("remove-completed").replace("{name}", args[2])));
-                        } else if ("removeall".equalsIgnoreCase(args[1]) && args.length == 3) {
+                        } else if ("removeall".equalsIgnoreCase(args[1]) && args.length == 3 && sender.hasPermission("playerdata.backup.removeall")) {
                             if (args[2].matches("\\d+[dmy]")) {
                                 removeAllOldBackups(args[2]);
                                 sender.sendMessage(applyColorCodes(getMessage("removeall-completed").replace("{days}", args[2])));
