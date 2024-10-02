@@ -30,6 +30,8 @@ public class PlayerData extends JavaPlugin {
     private Map<String, String> messages;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
     private DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private List<File> cachedBackups = null;
+    private int totalPages = 0;
 
     @Override
     public void onEnable() {
@@ -54,7 +56,7 @@ public class PlayerData extends JavaPlugin {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(applyColorCodes("&aPlayerData&bRollback &2v2.0.2-GA\n&eby &6Author87668\n\n&ahttps://www.spigotmc.org/resources/119720/"));
+            sender.sendMessage(applyColorCodes("&aPlayerData&bRollback &2v2.0.3-GA\n&eby &6Author87668\n\n&ahttps://www.spigotmc.org/resources/119720/"));
             return true;
         }
 
@@ -299,7 +301,7 @@ public class PlayerData extends JavaPlugin {
             return;
         }
 
-        List<File> sortedBackups = matchingBackups.stream().sorted((file1, file2) -> {
+        cachedBackups = matchingBackups.stream().sorted((file1, file2) -> {
             try {
                 Path path1 = Paths.get(file1.getAbsolutePath());
                 Path path2 = Paths.get(file2.getAbsolutePath());
@@ -311,14 +313,16 @@ public class PlayerData extends JavaPlugin {
             }
         }).collect(Collectors.toList());
 
+        totalPages = (cachedBackups.size() + 9) / 10;
+
         int page = 1;
         int start = (page - 1) * 10;
-        int end = Math.min(start + 10, sortedBackups.size());
+        int end = Math.min(start + 10, cachedBackups.size());
 
         sender.sendMessage(applyColorCodes(getMessage("backup-list-header")));
 
         for (int i = start; i < end; i++) {
-            File backupFolder = sortedBackups.get(i);
+            File backupFolder = cachedBackups.get(i);
             String backupName = backupFolder.getName();
             String backupTimeStr;
 
@@ -340,29 +344,27 @@ public class PlayerData extends JavaPlugin {
 
         sender.sendMessage(applyColorCodes(getMessage("page-navigation")
                 .replace("{current}", String.valueOf(page))
-                .replace("{total}", String.valueOf((sortedBackups.size() + 9) / 10))));
+                .replace("{total}", String.valueOf(totalPages))));
     }
 
     private void displayBackupPage(CommandSender sender, int page) {
-        List<File> matchingBackups = getMatchingBackups(null);
-
-        if (matchingBackups.isEmpty()) {
+        if (cachedBackups == null || cachedBackups.isEmpty()) {
             sender.sendMessage(applyColorCodes(getMessage("no-backups-found")));
             return;
         }
 
-        int start = (page - 1) * 10;
-        int end = Math.min(start + 10, matchingBackups.size());
-
-        if (start >= matchingBackups.size()) {
+        if (page < 1 || page > totalPages) {
             sender.sendMessage(applyColorCodes(getMessage("invalid-page")));
             return;
         }
 
+        int start = (page - 1) * 10;
+        int end = Math.min(start + 10, cachedBackups.size());
+
         sender.sendMessage(applyColorCodes(getMessage("backup-list-header")));
 
         for (int i = start; i < end; i++) {
-            File backupFolder = matchingBackups.get(i);
+            File backupFolder = cachedBackups.get(i);
             String backupName = backupFolder.getName();
             String backupTimeStr;
 
@@ -384,8 +386,9 @@ public class PlayerData extends JavaPlugin {
 
         sender.sendMessage(applyColorCodes(getMessage("page-navigation")
                 .replace("{current}", String.valueOf(page))
-                .replace("{total}", String.valueOf((matchingBackups.size() + 9) / 10))));
+                .replace("{total}", String.valueOf(totalPages))));
     }
+
 
     private List<File> getMatchingBackups(String timeFilter) {
         File backupsDir = new File(getDataFolder(), "Backups");
