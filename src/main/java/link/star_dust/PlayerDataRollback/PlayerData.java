@@ -54,7 +54,7 @@ public class PlayerData extends JavaPlugin {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(applyColorCodes("&aPlayerData&bRollback &2v2.0.1-GA\n&eby &6Author87668\n\n&ahttps://www.spigotmc.org/resources/119720/"));
+            sender.sendMessage(applyColorCodes("&aPlayerData&bRollback &2v2.0.2-GA\n&eby &6Author87668\n\n&ahttps://www.spigotmc.org/resources/119720/"));
             return true;
         }
 
@@ -364,16 +364,22 @@ public class PlayerData extends JavaPlugin {
         for (int i = start; i < end; i++) {
             File backupFolder = matchingBackups.get(i);
             String backupName = backupFolder.getName();
-            LocalDateTime backupTime;
+            String backupTimeStr;
+
             try {
-                backupTime = LocalDateTime.parse(backupName, formatter);
-            } catch (DateTimeParseException e) {
-                backupTime = LocalDateTime.now(); 
+                Path folderPath = Paths.get(backupFolder.getAbsolutePath());
+                BasicFileAttributes attributes = Files.readAttributes(folderPath, BasicFileAttributes.class);
+                Instant creationInstant = attributes.creationTime().toInstant();
+                LocalDateTime backupTime = LocalDateTime.ofInstant(creationInstant, ZoneId.systemDefault());
+                backupTimeStr = displayFormatter.format(backupTime);
+            } catch (IOException e) {
+                backupTimeStr = "ERROR";
             }
+
             sender.sendMessage(applyColorCodes(getMessage("backup-list-item")
                     .replace("{id}", String.valueOf(i + 1))
                     .replace("{folder}", backupName)
-                    .replace("{time}", displayFormatter.format(backupTime))));
+                    .replace("{time}", backupTimeStr)));
         }
 
         sender.sendMessage(applyColorCodes(getMessage("page-navigation")

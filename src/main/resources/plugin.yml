@@ -1,5 +1,5 @@
 name: PlayerDataRollback
-version: 2.0.1-GA
+version: 2.0.2-GA
 main: link.star_dust.PlayerDataRollback.PlayerData
 api-version: 1.13
 description: Allow you creata playerdata buckup and rollback playerdata
