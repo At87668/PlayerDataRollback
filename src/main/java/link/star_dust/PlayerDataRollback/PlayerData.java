@@ -4,16 +4,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import org.bstats.bukkit.Metrics;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
@@ -26,7 +32,6 @@ import java.util.stream.Collectors;
 
 public class PlayerData extends JavaPlugin {
 
-    private FileConfiguration languageConfig;
     private Map<String, String> messages;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
     private DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -38,14 +43,15 @@ public class PlayerData extends JavaPlugin {
     	int pluginId = 23504;
     	new Metrics(this, pluginId);
         
-        saveDefaultConfig();
+    	loadConfig();
         loadLanguage();
         startBackupTask();
+        checkForUpdates();
     }
 
     @Override
     public void onDisable() {
-        // pass
+    	// pass
     }
 
     @Override
@@ -56,7 +62,7 @@ public class PlayerData extends JavaPlugin {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(applyColorCodes("&aPlayerData&bRollback &2v2.0.3-GA\n&eby &6Author87668\n\n&ahttps://www.spigotmc.org/resources/119720/"));
+            sender.sendMessage(applyColorCodes("&aPlayerData&bRollback &2v"+ getDescription().getVersion() +"\n&eby &6Author87668\n\n&ahttps://www.spigotmc.org/resources/119720/"));
             return true;
         }
 
@@ -428,29 +434,126 @@ public class PlayerData extends JavaPlugin {
 
         return matchingBackups;
     }
+    
+    private void loadConfig() {
+        saveDefaultConfig();
+        File configFile = new File(getDataFolder(), "config.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+
+        InputStream defaultConfigStream = getResource("config.yml");
+        if (defaultConfigStream != null) {
+            YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultConfigStream));
+
+            for (String key : defaultConfig.getKeys(false)) {
+                if (!config.contains(key)) {
+                    config.set(key, defaultConfig.get(key));
+                }
+            }
+
+            try {
+                config.save(configFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     private void loadLanguage() {
-        String lang = getConfig().getString("language", "en_US");
-        File langFile = new File(getDataFolder(), "Languages/" + lang + ".yml");
+        String[] supportedLanguages = {"en_US", "de_DE", "zh_CN", "zh_TW"};
 
-        if (!langFile.exists()) {
-            saveResource("Languages/en_US.yml", false);
-            saveResource("Languages/de_DE.yml", false);
-            saveResource("Languages/zh_CN.yml", false);
-            saveResource("Languages/zh_TW.yml", false);
-            langFile = new File(getDataFolder(), "Languages/en_US.yml");
+        for (String lang : supportedLanguages) {
+            File langFile = new File(getDataFolder(), "Languages/" + lang + ".yml");
+            if (!langFile.exists()) {
+                saveResource("Languages/" + lang + ".yml", false);
+            }
         }
 
-        languageConfig = YamlConfiguration.loadConfiguration(langFile);
+        String userLang = getConfig().getString("language", "en_US");
+        File userLangFile = new File(getDataFolder(), "Languages/" + userLang + ".yml");
+
+        if (!userLangFile.exists()) {
+            getLogger().warning("Language file for '" + userLang + "' not found, using 'en_US' as fallback.");
+            userLangFile = new File(getDataFolder(), "Languages/en_US.yml");
+        }
+
+        File defaultLangFile = new File(getDataFolder(), "Languages/en_US.yml");
+        YamlConfiguration defaultLangConfig = YamlConfiguration.loadConfiguration(defaultLangFile);
+
+        YamlConfiguration userLangConfig = YamlConfiguration.loadConfiguration(userLangFile);
+
+        for (String key : defaultLangConfig.getConfigurationSection("messages").getKeys(false)) {
+            if (!userLangConfig.contains("messages." + key)) {
+                userLangConfig.set("messages." + key, defaultLangConfig.getString("messages." + key));
+            }
+        }
+
+        try {
+            userLangConfig.save(new File(getDataFolder(), "Languages/" + userLang + ".yml"));
+        } catch (IOException e) {
+            getLogger().severe("Failed to save language file: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         messages = new HashMap<>();
-        String prefix = languageConfig.getString("prefix", "&7[&aPlayerData&bRollback&7]");
-        
-        for (String key : languageConfig.getConfigurationSection("messages").getKeys(false)) {
-            String message = languageConfig.getString("messages." + key);
+        String prefix = userLangConfig.getString("prefix", "&7[&aPlayerData&bRollback&7]");
+
+        for (String key : userLangConfig.getConfigurationSection("messages").getKeys(false)) {
+            String message = userLangConfig.getString("messages." + key);
             if (message != null) {
                 message = ChatColor.translateAlternateColorCodes('&', message.replace("%prefix%", prefix));
             }
             messages.put(key, message);
+        }
+    }
+
+    
+    public void checkForUpdates() {
+        if (!getConfig().getBoolean("update-checker", true)) {
+            return;
+        }
+
+        String currentVersion = getDescription().getVersion();
+        String latestVersion = getLatestVersionFromSpigot();
+
+        if (latestVersion == null || currentVersion.equals(latestVersion)) {
+            return;
+        }
+        
+        String updateMessage = getMessage("update-available")
+                .replace("{version}", latestVersion);
+        getServer().getConsoleSender().sendMessage(applyColorCodes(updateMessage));
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasPermission("playerdata.checkupdate")) {
+                player.sendMessage(applyColorCodes(updateMessage));
+            }
+        }
+    }
+
+    private String getLatestVersionFromSpigot() {
+        try {
+            URL url = new URL("https://api.spigotmc.org/simple/0.2/index.php?action=getResource&id=119720");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            // Get "current_version"
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            return jsonResponse.getString("current_version");
+            
+        } catch (IOException | JSONException e) {
+            getLogger().warning("Failed to check for updates: " + e.getMessage());
+            return null;
         }
     }
 

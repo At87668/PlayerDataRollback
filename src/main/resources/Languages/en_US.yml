@@ -28,3 +28,4 @@ messages:
   no-backups-found: "%prefix% &cNo backups found for the specified time period."
   no-backups: "%prefix% &cNo backups available."
   invalid-time-filter: "%prefix% &cInvalid time filter {filter}."
+  update-available: "%prefix% &aNew version {version} now available!"

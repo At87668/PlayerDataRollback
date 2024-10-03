@@ -28,3 +28,5 @@ messages:
   no-backups-found: "%prefix% &c未找到指定時間段內的備份。"
   no-backups: "%prefix% &c沒有可用的備份。"
   invalid-time-filter: "%prefix% &c時間篩選器 {filter} 無效。"
+  update-available: "%prefix% &a新版本 {version} 可用了！"
+
