@@ -1,5 +1,5 @@
 name: PlayerDataRollback
-version: 2.1.0-GA
+version: 2.1.1-GA
 main: link.star_dust.PlayerDataRollback.PlayerData
 api-version: 1.13
 description: Allow you creata playerdata buckup and rollback playerdata
@@ -38,5 +38,5 @@ permissions:
     description: Allows the player to list all backups
     default: op
   playerdata.checkupdate:
-    description: Allows the player can get update messages
+    description: Allows the player get update messages
     default: op

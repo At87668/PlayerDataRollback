@@ -194,6 +194,11 @@ public class PlayerData extends JavaPlugin {
 
         try {
             for (File file : playerDataFolder.listFiles()) {
+                // Skip files ending with .dat_old to save space
+                if (file.getName().endsWith(".dat_old")) {
+                    continue;
+                }
+
                 Path sourcePath = file.toPath();
                 Path destinationPath = Paths.get(backupFolder.getAbsolutePath(), file.getName());
 
@@ -204,6 +209,7 @@ public class PlayerData extends JavaPlugin {
             getLogger().severe("Failed to backup player data: " + e.getMessage());
         }
     }
+
 
     private void rollbackPlayerData(String playerName, String backupName) {
         UUID playerUUID = Bukkit.getOfflinePlayer(playerName).getUniqueId();
@@ -459,7 +465,7 @@ public class PlayerData extends JavaPlugin {
     }
 
     private void loadLanguage() {
-        String[] supportedLanguages = {"en_US", "de_DE", "zh_CN", "zh_TW"};
+        String[] supportedLanguages = {"en_US", "de_DE", "zh_CN", "zh_TW", "fr_FR", "ja_JP", "ru_MO"};
 
         for (String lang : supportedLanguages) {
             File langFile = new File(getDataFolder(), "Languages/" + lang + ".yml");
