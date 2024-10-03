@@ -43,6 +43,12 @@ Chinese (Traditional) (zh_TW)
 
 German (de_DE)
 
+Japanese (ja_JP)
+
+French (fr_FR)
+
+Russian (ru_MO)
+
 Translations are applied automatically based on the server's locale.
 
 ## Installation
