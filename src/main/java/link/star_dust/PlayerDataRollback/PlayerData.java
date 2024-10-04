@@ -6,6 +6,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -43,6 +46,8 @@ public class PlayerData extends JavaPlugin {
     	int pluginId = 23504;
     	new Metrics(this, pluginId);
         
+    	getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+    	
     	loadConfig();
         loadLanguage();
         startBackupTask();
@@ -77,7 +82,7 @@ public class PlayerData extends JavaPlugin {
 
             case "backup":
                 if (sender.hasPermission("playerdata.backup")) {
-                	if (args.length >= 2) {
+                    if (args.length >= 2) {
                         if ("create".equalsIgnoreCase(args[1]) && sender.hasPermission("playerdata.backup.create")) {
                             backupPlayerData(args.length == 3 ? args[2] : null);
                             sender.sendMessage(applyColorCodes(getMessage("backup-completed")));
@@ -86,8 +91,13 @@ public class PlayerData extends JavaPlugin {
                             sender.sendMessage(applyColorCodes(getMessage("remove-completed").replace("{name}", args[2])));
                         } else if ("removeall".equalsIgnoreCase(args[1]) && args.length == 3 && sender.hasPermission("playerdata.backup.removeall")) {
                             if (args[2].matches("\\d+[dmy]")) {
-                                removeAllOldBackups(args[2]);
-                                sender.sendMessage(applyColorCodes(getMessage("removeall-completed").replace("{days}", args[2])));
+                                // Call the removeAllOldBackups method and check the result
+                                boolean backupsRemoved = removeAllOldBackups(args[2]);
+                                if (backupsRemoved) {
+                                    sender.sendMessage(applyColorCodes(getMessage("removeall-completed").replace("{time}", args[2])));
+                                } else {
+                                    sender.sendMessage(applyColorCodes(getMessage("no-backups-found")));
+                                }
                             } else {
                                 sender.sendMessage(applyColorCodes(getMessage("invalid-time-filter").replace("{filter}", args[2])));
                             }
@@ -98,7 +108,7 @@ public class PlayerData extends JavaPlugin {
                             sender.sendMessage(applyColorCodes(getMessage("help-backup-removeall")));
                             sender.sendMessage(applyColorCodes(getMessage("help-backup-list")));
                         }
-                	} else {
+                    } else {
                         sender.sendMessage(applyColorCodes(getMessage("usage-error")));
                         sender.sendMessage(applyColorCodes(getMessage("help-backup-create")));
                         sender.sendMessage(applyColorCodes(getMessage("help-backup-remove")));
@@ -109,6 +119,7 @@ public class PlayerData extends JavaPlugin {
                     sender.sendMessage(applyColorCodes(getMessage("no-permission")));
                 }
                 break;
+
 
             case "rollback":
                 if (args.length == 3 && sender.hasPermission("playerdata.rollback")) {
@@ -283,14 +294,16 @@ public class PlayerData extends JavaPlugin {
         }
     }
 
-    private void removeAllOldBackups(String timeFilter) {
+    private boolean removeAllOldBackups(String timeFilter) {
         List<File> matchingBackups = getMatchingBackups(timeFilter);
 
+        // If no backups were found, return false
         if (matchingBackups.isEmpty()) {
             getLogger().warning(applyColorCodes(getMessage("no-backups-found")));
-            return;
+            return false;
         }
 
+        // Iterate through and delete each backup folder and its contents
         for (File backupFolder : matchingBackups) {
             try {
                 for (File file : backupFolder.listFiles()) {
@@ -302,8 +315,11 @@ public class PlayerData extends JavaPlugin {
             }
         }
 
-        // getLogger().info(applyColorCodes(getMessage("removeall-completed").replace("{days}", timeFilter)));
+        // Return true if backups were found and deleted
+        return true;
     }
+
+
 
     private void listBackups(CommandSender sender, String timeFilter) {
         List<File> matchingBackups = getMatchingBackups(timeFilter);
@@ -426,20 +442,20 @@ public class PlayerData extends JavaPlugin {
             cutoffTime = cutoffTime.minusYears(years);
         }
 
+        long cutoffMillis = cutoffTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         List<File> matchingBackups = new ArrayList<>();
+
         for (File backup : allBackups) {
-            try {
-                LocalDateTime backupTime = LocalDateTime.parse(backup.getName(), formatter);
-                if (backupTime.isBefore(cutoffTime)) {
-                    matchingBackups.add(backup);
-                }
-            } catch (DateTimeParseException e) {
-                // Skip backups with invalid names
+            long lastModified = backup.lastModified();
+
+            if (lastModified < cutoffMillis) {
+                matchingBackups.add(backup);
             }
         }
 
         return matchingBackups;
     }
+
     
     private void loadConfig() {
         saveDefaultConfig();
@@ -474,37 +490,36 @@ public class PlayerData extends JavaPlugin {
             }
         }
 
-        String userLang = getConfig().getString("language", "en_US");
-        File userLangFile = new File(getDataFolder(), "Languages/" + userLang + ".yml");
+        String lang = getConfig().getString("language", "en_US");
+        File langFile = new File(getDataFolder(), "Languages/" + lang + ".yml");
 
-        if (!userLangFile.exists()) {
-            getLogger().warning("Language file for '" + userLang + "' not found, using 'en_US' as fallback.");
-            userLangFile = new File(getDataFolder(), "Languages/en_US.yml");
+        if (!langFile.exists()) {
+            lang = "en_US";
+            langFile = new File(getDataFolder(), "Languages/en_US.yml");
         }
 
         File defaultLangFile = new File(getDataFolder(), "Languages/en_US.yml");
         YamlConfiguration defaultLangConfig = YamlConfiguration.loadConfiguration(defaultLangFile);
 
-        YamlConfiguration userLangConfig = YamlConfiguration.loadConfiguration(userLangFile);
+        YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(langFile);
 
         for (String key : defaultLangConfig.getConfigurationSection("messages").getKeys(false)) {
-            if (!userLangConfig.contains("messages." + key)) {
-                userLangConfig.set("messages." + key, defaultLangConfig.getString("messages." + key));
+            if (!langConfig.contains("messages." + key)) {
+                langConfig.set("messages." + key, defaultLangConfig.getString("messages." + key));
             }
         }
 
         try {
-            userLangConfig.save(new File(getDataFolder(), "Languages/" + userLang + ".yml"));
+            langConfig.save(langFile);
         } catch (IOException e) {
-            getLogger().severe("Failed to save language file: " + e.getMessage());
             e.printStackTrace();
         }
 
         messages = new HashMap<>();
-        String prefix = userLangConfig.getString("prefix", "&7[&aPlayerData&bRollback&7]");
+        String prefix = langConfig.getString("prefix", "&7[&aPlayerData&bRollback&7]");
 
-        for (String key : userLangConfig.getConfigurationSection("messages").getKeys(false)) {
-            String message = userLangConfig.getString("messages." + key);
+        for (String key : langConfig.getConfigurationSection("messages").getKeys(false)) {
+            String message = langConfig.getString("messages." + key);
             if (message != null) {
                 message = ChatColor.translateAlternateColorCodes('&', message.replace("%prefix%", prefix));
             }
@@ -512,6 +527,24 @@ public class PlayerData extends JavaPlugin {
         }
     }
 
+    public class PlayerJoinListener implements Listener {
+
+        @EventHandler
+        public void onPlayerJoin(PlayerJoinEvent event) {
+            Player player = event.getPlayer();
+            // Check for updates only if the player has permission
+            if (player.hasPermission("playerdata.checkupdate")) {
+                String latestVersion = getLatestVersionFromSpigot();
+                String currentVersion = getDescription().getVersion();
+
+                if (latestVersion != null && !currentVersion.equals(latestVersion)) {
+                    String updateMessage = getMessage("update-available")
+                            .replace("{version}", latestVersion);
+                    player.sendMessage(applyColorCodes(updateMessage));
+                }
+            }
+        }
+    }
     
     public void checkForUpdates() {
         if (!getConfig().getBoolean("update-checker", true)) {

@@ -3,7 +3,7 @@ messages:
   backup-completed: "%prefix% &aBackup completed successfully."
   rollback-completed: "%prefix% &7Rolled back data for player {player}."
   rollback-all-completed: "%prefix% &eSuccessfully restored all player data from backup {name}."
-  removeall-completed: "%prefix% &eRemoved backups older than {days} days."
+  removeall-completed: "%prefix% &eRemoved backups older than {time}."
   remove-completed: "%prefix% &eRemoved backup."
   reload-completed: "%prefix% &aPlugin configuration reloaded."
   usage-error: "%prefix% &cInvalid command usage. Please use &e/pld help&c to get help."
