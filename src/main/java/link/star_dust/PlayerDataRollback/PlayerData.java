@@ -29,7 +29,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -244,7 +243,7 @@ public class PlayerData extends JavaPlugin {
                 getLogger().severe("Failed to rollback player data: " + e.getMessage());
             }
         } else {
-            getLogger().warning(applyColorCodes(getMessage("no-backup-found").replace("{days}", backupName)));
+            getLogger().warning(applyColorCodes(getMessage("no-backup-found").replace("{time}", backupName)));
         }
     }
 
