@@ -7,7 +7,7 @@ messages:
   remove-completed: "%prefix% &eРезервная копия была удалена."
   reload-completed: "%prefix% &aКонфигурация плагина была перезагружена."
   usage-error: "%prefix% &cНеверное использование команды. Используйте &e/pld help&c для помощи."
-  no-backup-found: "%prefix% &cНе найдена резервная копия старше {time}."
+  no-backup-found: "%prefix% &cНе удалось найти резервную копию с именем {name}."
   no-playerdata: "%prefix% &cПапка с данными игроков не найдена!"
   no-permission: "%prefix% &cУ вас нет прав для выполнения этого действия."
   rollback-kick: "&6Администратор восстанавливает ваши данные, теперь вы можете снова присоединиться к серверу."

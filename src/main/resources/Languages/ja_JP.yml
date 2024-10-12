@@ -7,7 +7,7 @@ messages:
   remove-completed: "%prefix% &eバックアップを削除しました。"
   reload-completed: "%prefix% &aプラグインの設定がリロードされました。"
   usage-error: "%prefix% &cコマンドの使用方法が無効です。&e/pld help&c を使用してヘルプを参照してください。"
-  no-backup-found: "%prefix% &c{time} 前のバックアップが見つかりませんでした。"
+  no-backup-found: "%prefix% &c{name} という名前のバックアップが見つかりません。"
   no-playerdata: "%prefix% &cプレイヤーデータフォルダが見つかりません！"
   no-permission: "%prefix% &cこの操作を行う権限がありません。"
   rollback-kick: "&6管理者があなたのプレイヤーデータをロールバックしています。再度参加できます。"

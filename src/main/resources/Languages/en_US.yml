@@ -7,7 +7,7 @@ messages:
   remove-completed: "%prefix% &eRemoved backup."
   reload-completed: "%prefix% &aPlugin configuration reloaded."
   usage-error: "%prefix% &cInvalid command usage. Please use &e/pld help&c to get help."
-  no-backup-found: "%prefix% &cNo backup found from {time} ago."
+  no-backup-found: "%prefix% &cUnable to find a backup named {name}."
   no-playerdata: "%prefix% &cPlayer data folder not found!"
   no-permission: "%prefix% &cYou don't have permission to do this."
   rollback-kick: "&6Admin is rolling back your player data and you can rejoin now"

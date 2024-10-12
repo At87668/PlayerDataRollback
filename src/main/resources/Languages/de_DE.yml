@@ -7,7 +7,7 @@ messages:
   remove-completed: "%prefix% &eSicherung entfernt."
   reload-completed: "%prefix% &aPlugin-Konfiguration wurde neu geladen."
   usage-error: "%prefix% &cUngültige Befehlsnutzung. Bitte verwende &e/pld help&c für Hilfe."
-  no-backup-found: "%prefix% &cKeine Sicherung gefunden, die älter als {time} ist."
+  no-backup-found: "%prefix% &cSicherung mit dem Namen {name} kann nicht gefunden werden."
   no-playerdata: "%prefix% &cSpielerdaten-Ordner nicht gefunden!"
   no-permission: "%prefix% &cDu hast keine Berechtigung dafür."
   rollback-kick: "&6Ein Admin setzt deine Spielerdaten zurück, du kannst jetzt wieder beitreten"

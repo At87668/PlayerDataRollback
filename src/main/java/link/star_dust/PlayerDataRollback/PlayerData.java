@@ -124,7 +124,15 @@ public class PlayerData extends JavaPlugin {
                 if (args.length == 3 && sender.hasPermission("playerdata.rollback")) {
                     rollbackPlayerData(args[1], args[2]);
                     sender.sendMessage(applyColorCodes(getMessage("rollback-completed").replace("{player}", args[1])));
-                } else if (args.length == 2 && sender.hasPermission("playerdata.rollbackall")) {
+                } else {
+                    sender.sendMessage(applyColorCodes(getMessage("usage-error")));
+                    sender.sendMessage(applyColorCodes(getMessage("help-rollback")));
+                    sender.sendMessage(applyColorCodes(getMessage("help-rollbackall")));
+                }
+                break;
+                
+            case "rollbackall":
+                if (args.length == 2 && sender.hasPermission("playerdata.rollbackall")) {
                     rollbackAllPlayerData(args[1]);
                     sender.sendMessage(applyColorCodes(getMessage("rollback-all-completed").replace("{name}", args[1])));
                 } else {
@@ -243,7 +251,7 @@ public class PlayerData extends JavaPlugin {
                 getLogger().severe("Failed to rollback player data: " + e.getMessage());
             }
         } else {
-            getLogger().warning(applyColorCodes(getMessage("no-backup-found").replace("{time}", backupName)));
+            getLogger().warning(applyColorCodes(getMessage("no-backup-found").replace("{name}", backupName)));
         }
     }
 

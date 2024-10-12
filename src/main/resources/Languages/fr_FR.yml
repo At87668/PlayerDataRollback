@@ -7,7 +7,7 @@ messages:
   remove-completed: "%prefix% &eSauvegarde supprimée."
   reload-completed: "%prefix% &aConfiguration du plugin rechargée."
   usage-error: "%prefix% &cUtilisation incorrecte de la commande. Veuillez utiliser &e/pld help&c pour obtenir de l'aide."
-  no-backup-found: "%prefix% &cAucune sauvegarde trouvée datant de {time}."
+  no-backup-found: "%prefix% &cImpossible de trouver une sauvegarde nommée {name}."
   no-playerdata: "%prefix% &cDossier des données de joueur introuvable!"
   no-permission: "%prefix% &cVous n'avez pas la permission de faire cela."
   rollback-kick: "&6L'administrateur restaure vos données de joueur, vous pouvez maintenant vous reconnecter."
