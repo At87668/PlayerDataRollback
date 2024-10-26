@@ -561,10 +561,10 @@ public class PlayerData extends JavaPlugin {
         String currentVersion = getDescription().getVersion();
         String latestVersion = getLatestVersionFromSpigot();
 
-        if (latestVersion == null || currentVersion.equals(latestVersion)) {
+        if (latestVersion == null || !isNewerVersion(currentVersion, latestVersion)) {
             return;
         }
-        
+
         String updateMessage = getMessage("update-available")
                 .replace("{version}", latestVersion);
         getServer().getConsoleSender().sendMessage(applyColorCodes(updateMessage));
@@ -575,6 +575,25 @@ public class PlayerData extends JavaPlugin {
             }
         }
     }
+
+    private boolean isNewerVersion(String currentVersion, String latestVersion) {
+        // Remove non-numeric parts and split by periods
+        String[] currentParts = currentVersion.replaceAll("[^0-9.]", "").split("\\.");
+        String[] latestParts = latestVersion.replaceAll("[^0-9.]", "").split("\\.");
+
+        int maxLength = Math.max(currentParts.length, latestParts.length);
+        for (int i = 0; i < maxLength; i++) {
+            int current = i < currentParts.length ? Integer.parseInt(currentParts[i]) : 0;
+            int latest = i < latestParts.length ? Integer.parseInt(latestParts[i]) : 0;
+            if (latest > current) {
+                return true;
+            } else if (current > latest) {
+                return false;
+            }
+        }
+        return false;
+    }
+
 
     private String getLatestVersionFromSpigot() {
         try {
